@@ -1,0 +1,89 @@
+services:
+  proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - ${PROXY_SERVICE_PORT:-80}:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "${ADMINER_SERVICE_PORT:-8080}:8080"
+    depends_on:
+      - db
+    environment:
+      - VIRTUAL_HOST=adminer.local.tarifiyt.com
+      - VIRTUAL_PORT=8080
+      - ADMINER_DESIGN=pepa-linha-dark
+
+  api:
+    container_name: '${COMPOSE_PROJECT_NAME}-api'
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: true
+
+    env_file:
+      - .env
+      - ./backend/.env
+    ports:
+      - "${API_SERVICE_PORT:-8000}:8000"
+    command: make dev
+    environment:
+      - VIRTUAL_HOST=api.local.tarifiyt.com
+      - VIRTUAL_PORT=8000
+    develop:
+      watch:
+        - action: sync
+          x-initialSync: true
+          path: ./backend
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./uv.lock
+
+    stdin_open: true
+    tty: true
+    restart: always
+
+    volumes:
+      - ./backend/tests:/app/tests
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 5m
+      timeout: 5s
+      retries: 5
+    
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+
+  db:
+    container_name: '${COMPOSE_PROJECT_NAME}-db'
+    image: mysql:9
+    restart: always
+    environment:
+      - VIRTUAL_HOST=db.local.harborn.com
+      - VIRTUAL_PORT=3306
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=tarifiyt
+    ports:
+      - "${DB_SERVICE_PORT:-3306}:3306"
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} || exit 1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  mysql_data:
