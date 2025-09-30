@@ -5,6 +5,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.ruff_cache/
+versions/
+script.py.mako
 
 # Unit test / coverage reports
 .coverage

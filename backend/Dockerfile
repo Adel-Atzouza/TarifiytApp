@@ -10,13 +10,6 @@ RUN apt-get update \
         g++ \
         make \
         curl \
-        unixodbc \
-        unixodbc-dev \
-        gnupg \
-    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
-    && echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/11/prod bullseye main" > /etc/apt/sources.list.d/mssql-release.list \
-    && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
     && rm -rf /var/lib/apt/lists/*
 
 # Prepare UV
@@ -29,19 +22,19 @@ ENV UV_LINK_MODE=copy
 # Copy dependencies before installation
 COPY pyproject.toml uv.lock alembic.ini /app/
 COPY Makefile /app/
-COPY ./src /app/src
+COPY ./api /app/api
 COPY ./scripts /app/scripts
 COPY ./migrations /app/migrations
 
 # Install optional dev dependencies
-ARG INSTALL_DEV=false
+ARG INSTALL_DEV=true
 RUN --mount=type=cache,target=/root/.cache/uv \
     if [ "$INSTALL_DEV" = "true" ]; then \
         echo "Installing with dev dependencies"; \
-        uv sync --frozen --no-install-project --extra dev; \
+        uv sync --locked --extra dev; \
     else \
         echo "Installing without dev dependencies"; \
-        uv sync --frozen --no-install-project --no-dev; \
+        uv sync --locked --no-dev; \
     fi
 
 CMD ["make", "run"]

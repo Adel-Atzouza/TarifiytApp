@@ -39,23 +39,32 @@ qa:
 # Wait for MySQL DB and run migrations (app database)
 migrate:
 	@echo "Waiting for MySQL DB to be ready..."
-	@uv run --extra dev python src/pre_start.py
+	@uv run --extra dev alembic revision --autogenerate -m "Initialize database"
 	@echo "Running MySQL database migrations (app database)..."
 	@uv run --extra dev alembic upgrade head
+
+	@uv run --extra dev python scripts/seed_database.py
+
+migrate-dev:
+	@docker compose exec -T api uv run alembic revision --autogenerate -m "Update database"
+	@docker compose exec -T api uv run alembic upgrade head
+
+seed-db-dev:
+	@docker compose exec -T api uv run scripts/seed_database.py
 
 # Run migrations and start application
 run: migrate
 	@echo "Run migrations and start application..."
-	@uv run fastapi run --host=:: --workers 4 src/api/main.py
+	@uv run uvicorn --host=:: --workers 4 api.api.src.main:app --reload
 
 run-ipv4: migrate
 	@echo "Run migrations and start application..."
-	@uv run fastapi run --host=0.0.0.0 --workers 4 src/api/main.py
+	@uv run uvicorn --host=0.0.0.0 --workers 4 api.api.src.main:app --reload
 
 # Development mode
 dev:
 	@echo "Start DB and run migrations..."
-	@uv run --extra dev fastapi run src/api/main.py --reload
+	@uv run --extra dev uvicorn --host=0.0.0.0 --workers 4 api.api.src.main:app --reload
 
 # ========================================
 # 🧪 Testing

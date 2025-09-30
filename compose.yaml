@@ -30,7 +30,7 @@ services:
       - ./backend/.env
     ports:
       - "${API_SERVICE_PORT:-8000}:8000"
-    command: make dev
+    command: make run
     environment:
       - VIRTUAL_HOST=api.local.tarifiyt.com
       - VIRTUAL_PORT=8000
@@ -68,7 +68,7 @@ services:
     image: mysql:9
     restart: always
     environment:
-      - VIRTUAL_HOST=db.local.harborn.com
+      - VIRTUAL_HOST=db.local.tarifiyt.com
       - VIRTUAL_PORT=3306
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=tarifiyt
