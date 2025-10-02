@@ -39,11 +39,9 @@ qa:
 # Wait for MySQL DB and run migrations (app database)
 migrate:
 	@echo "Waiting for MySQL DB to be ready..."
-	@uv run --extra dev alembic revision --autogenerate -m "Initialize database"
-	@echo "Running MySQL database migrations (app database)..."
-	@uv run --extra dev alembic upgrade head
-
+	@uv run --extra dev alembic current
 	@uv run --extra dev python scripts/seed_database.py
+
 
 migrate-dev:
 	@docker compose exec -T api uv run alembic revision --autogenerate -m "Update database"
@@ -75,4 +73,3 @@ test:
 	@echo "Running tests..."
 	@uv run --extra dev mypy .
 	@uv run --extra dev pytest
-

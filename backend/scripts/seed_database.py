@@ -4,7 +4,7 @@ Database seeding script
 """
 import os
 import sys
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from uuid import uuid4
 
@@ -30,6 +30,7 @@ def seed_database():
         if existing_lessons > 0:
             print(f"Database already has {existing_lessons} lessons. Skipping seeding.")
             return
+
         
         # Sample lesson data
         sample_lessons = [

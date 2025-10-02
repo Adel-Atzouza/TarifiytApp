@@ -4,12 +4,9 @@ from typing import Generator
 import logging
 
 from sqlalchemy import create_engine, orm
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
-
-Base = declarative_base()
 
 
 class Database:

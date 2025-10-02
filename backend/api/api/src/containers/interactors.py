@@ -7,7 +7,7 @@ from api.domain.src.interactors.get_all_lessons_interactor import GetAllLessonsI
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        packages=["api"]
+        packages=["api.api.src.routers"]
     )
     get_all_lessons_interactor = providers.Factory(GetAllLessonsInteractor)
 
