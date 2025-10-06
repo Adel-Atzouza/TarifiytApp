@@ -3,11 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 from dependency_injector.wiring import Provide
 
+from api.domain.src import interactors
 from api.data.src.lessons.lessons_repository_logic import LessonsRepositoryLogic
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        packages=["api"]
+        packages=[interactors]
     )
     lessons_repository_logic = providers.Factory(LessonsRepositoryLogic)
     

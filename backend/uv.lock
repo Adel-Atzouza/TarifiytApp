@@ -50,6 +50,7 @@ dependencies = [
     { name = "pymysql" },
     { name = "python-dotenv" },
     { name = "sqlalchemy" },
+    { name = "typer" },
     { name = "uvicorn" },
 ]
 
@@ -77,6 +78,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.13.1" },
     { name = "sqlalchemy", specifier = ">=2.0.43" },
+    { name = "typer", specifier = ">=0.19.1" },
     { name = "uvicorn", specifier = ">=0.36.0" },
 ]
 provides-extras = ["dev"]

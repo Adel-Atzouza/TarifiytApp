@@ -7,14 +7,15 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from dependency_injector.wiring import Provide
 
+from api.data import src as repositories
 from api.api.src.containers.database_factory import Database
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        packages=["api"]
+        packages=[repositories]
     )
 
-    db_url = os.environ.get("DB_URL", "mysql+pymysql://root:password@db:3306/tarifiyt")
+    db_url = os.environ.get("DB_URL")
     db = providers.Singleton(Database, db_url=db_url)
     session = providers.Factory(db.provided.session)
 
