@@ -25,5 +25,9 @@ dev = [
 
 [dependency-groups]
 dev = [
+    "aiohttp>=3.13.0",
     "alembic>=1.16.5",
+    "httpx>=0.28.1",
+    "pytest>=8.4.2",
+    "requests>=2.32.5",
 ]

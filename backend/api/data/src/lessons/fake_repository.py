@@ -1,13 +1,14 @@
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 from dependency_injector.wiring import inject
 
 from api.domain.src.repositories.lessons_repository import LessonsRepository
-from api.data.src.db_models.LessonDB import LessonDB
-from api.domain.src.mappers.lesson_db_mapper import LessonDBMapper
-from api.domain.src.models.Lesson import Lesson
 from api.api.src.containers.database import SessionDep
 
-class LessonsRepositoryLogic(LessonsRepository):
+from api.data.src.db_models.LessonDB import LessonDB
+from api.domain.src.mappers.lesson_db_mapper import LessonDBMapper
+
+class FakeRepositoryLogic(LessonsRepository):
     @inject
     def __init__(self, session: SessionDep) -> None:
         self.session = session
@@ -16,16 +17,8 @@ class LessonsRepositoryLogic(LessonsRepository):
         lesson = self.session.query(LessonDB).filter(LessonDB.id == lesson_id).first()
         return LessonDBMapper.to_domain_model(lesson)
 
-    # def get_all_lessons(self):
-    #     lessons = self.session.query(LessonDB).all()
-    #     return [LessonDBMapper.to_domain_model(lesson) for lesson in lessons]
-    def get_all_lessons(self):
-        return id(self.session)
-
-    # def get_all_lessons(self) -> list[Lesson]:
-    #     with self.session as session:
-    #         result = session.execute(select(LessonDB)).scalars().all()
-    #         return [LessonDBMapper.to_domain_model(lesson) for lesson in result]
+    def get_all_lessons(self): # type: ignore
+        return self.session
     
     def create_lesson(self, lesson):
         db_lesson = LessonDBMapper.to_db_model(lesson)

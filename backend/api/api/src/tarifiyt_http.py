@@ -1,18 +1,26 @@
-from fastapi import FastAPI
+from typing import Any, Callable, Generator
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.api.src.routers.lessons import router as lessons_router
 from api.api.src.containers.container import Container
+from api.api.src.containers.database import Container as DatabaseContainer
+from api.api.src.containers.database import SessionLocal, set_request_session, reset_request_session
+from dependency_injector.wiring import Provide
 
-
+def session_initializer() -> Callable[[], Generator]:
+    # Legacy no-op (scoping is handled via DI middleware)
+    def init() -> Generator:
+        yield
+    return init
 
 class TarifiytHTTP(FastAPI):
     def __init__(self) -> None:
+        # No global dependencies; request-scoped DI is handled by middleware
         super().__init__()
 
-        self.container = Container()
-
         self._setup_cors_middlewares()
+        self._setup_di()
         self._setup_routers()
 
     def _setup_cors_middlewares(self) -> None:
@@ -29,3 +37,27 @@ class TarifiytHTTP(FastAPI):
 
     def _setup_routers(self) -> None:
         self.include_router(lessons_router)
+    
+    def _setup_di(self) -> None:
+        # Initialize container and install request-scope middleware
+        container = DatabaseContainer()
+        # Store on app state for potential debug/extension
+        self.container = container
+        # Wire container according to its wiring_config so Provide[...] works
+        container.wire()
+
+        @self.middleware("http")
+        async def di_request_scope_middleware(request: Request, call_next):
+            # Create a per-request Session and bind it to context var
+            session = SessionLocal()
+            token = set_request_session(session)
+            try:
+                response = await call_next(request)
+                return response
+            except Exception:
+                session.rollback()
+                raise
+            finally:
+                session.close()
+                reset_request_session(token)
+    
