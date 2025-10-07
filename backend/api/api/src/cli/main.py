@@ -4,18 +4,36 @@ from dependency_injector import providers
 
 from api.api.src.containers.container import Container
 from api.api.src.containers.database import session_context
+from sqlalchemy.exc import OperationalError
+from functools import wraps
 
 app = typer.Typer()
 console = Console()
 container = Container()
 
-@app.command()
-def get_lessons() -> None:
-    with session_context():
-        interactor = container.interactors.get_all_lessons_interactor()
-        results = interactor()
+def command(*c_args, **c_kwargs):
+    def decorator(func):
+        @app.command(*c_args, **c_kwargs)
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            try:
+                with session_context():
+                    return func(*args, **kwargs)
+            except OperationalError:
+                console.print("[red]Database is not reachable.[/red]")
+                console.print(
+                    "Tip: Start Docker (DB service) with: [bold]docker compose up -d[/bold], or set DB_URL to a reachable database."
+                )
+                raise typer.Exit(code=1)
+        return wrapped
+    return decorator
 
-        console.print(f"Results: {results}")
+@command()
+def get_lessons() -> None:
+    interactor = container.interactors.get_all_lessons_interactor()
+    results = interactor()
+
+    console.print(f"Results: {results}")
 
 
 if __name__ == "__main__":

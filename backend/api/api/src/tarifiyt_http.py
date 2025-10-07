@@ -14,7 +14,8 @@ class TarifiytHTTP(FastAPI):
 
         self._setup_cors_middlewares()
         self._setup_di()
-        self._setup_routers()
+    self._setup_routers()
+    self._setup_error_handlers()
 
     def _setup_cors_middlewares(self) -> None:
         self.add_middleware(
@@ -54,3 +55,5 @@ class TarifiytHTTP(FastAPI):
                 session.close()
                 reset_request_session(token)
     
+
+

@@ -16,17 +16,10 @@ class LessonsRepositoryLogic(LessonsRepository):
         lesson = self.session.query(LessonDB).filter(LessonDB.id == lesson_id).first()
         return LessonDBMapper.to_domain_model(lesson)
 
-    # def get_all_lessons(self):
-    #     lessons = self.session.query(LessonDB).all()
-    #     return [LessonDBMapper.to_domain_model(lesson) for lesson in lessons]
     def get_all_lessons(self):
-        return id(self.session)
+        lessons = self.session.query(LessonDB).all()
+        return [LessonDBMapper.to_domain_model(lesson) for lesson in lessons]
 
-    # def get_all_lessons(self) -> list[Lesson]:
-    #     with self.session as session:
-    #         result = session.execute(select(LessonDB)).scalars().all()
-    #         return [LessonDBMapper.to_domain_model(lesson) for lesson in result]
-    
     def create_lesson(self, lesson):
         db_lesson = LessonDBMapper.to_db_model(lesson)
         self.session.add(db_lesson)
