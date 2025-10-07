@@ -4,19 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.api.src.routers.lessons import router as lessons_router
 from api.api.src.containers.container import Container
-from api.api.src.containers.database import Container as DatabaseContainer
 from api.api.src.containers.database import SessionLocal, set_request_session, reset_request_session
 from dependency_injector.wiring import Provide
 
-def session_initializer() -> Callable[[], Generator]:
-    # Legacy no-op (scoping is handled via DI middleware)
-    def init() -> Generator:
-        yield
-    return init
 
 class TarifiytHTTP(FastAPI):
     def __init__(self) -> None:
-        # No global dependencies; request-scoped DI is handled by middleware
         super().__init__()
 
         self._setup_cors_middlewares()
@@ -40,7 +33,7 @@ class TarifiytHTTP(FastAPI):
     
     def _setup_di(self) -> None:
         # Initialize container and install request-scope middleware
-        container = DatabaseContainer()
+        container = Container()
         # Store on app state for potential debug/extension
         self.container = container
         # Wire container according to its wiring_config so Provide[...] works
