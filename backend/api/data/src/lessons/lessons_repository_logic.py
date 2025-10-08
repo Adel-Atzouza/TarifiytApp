@@ -23,7 +23,6 @@ class LessonsRepositoryLogic(LessonsRepository):
     def create_lesson(self, lesson):
         db_lesson = LessonDBMapper.to_db_model(lesson)
         self.session.add(db_lesson)
-        self.session.commit()
         self.session.refresh(db_lesson)
         return LessonDBMapper.to_domain_model(db_lesson)
     
