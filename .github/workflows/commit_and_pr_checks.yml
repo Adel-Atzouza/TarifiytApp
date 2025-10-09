@@ -19,7 +19,6 @@ jobs:
 
       - name: Setup environment
         run: |
-           cp .env.ci .env
            echo "UV_INDEX_HARBORN_USERNAME=harborn" >> $GITHUB_ENV
            echo "DB_URL=${{ secrets.DB_URL }}" >> $GITHUB_ENV
 
