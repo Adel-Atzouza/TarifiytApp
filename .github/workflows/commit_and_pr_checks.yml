@@ -23,7 +23,7 @@ jobs:
            echo "DB_URL=${{ secrets.DB_URL }}" >> $GITHUB_ENV
 
       - name: Code Quality & Tests
-        run: make ci
+        run: make ci-backend
 
     env:
       DB_URL: ${{ secrets.DB_URL }}
