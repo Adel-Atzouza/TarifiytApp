@@ -1,7 +1,7 @@
 FROM python:3.13-slim
 
 # Set working directory
-WORKDIR /app
+WORKDIR /api
 
 # Install system dependencies including ODBC drivers for MSSQL
 RUN apt-get update \
@@ -14,17 +14,17 @@ RUN apt-get update \
 
 # Prepare UV
 COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
-ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONPATH=/app
+ENV PATH="/api/.venv/bin:$PATH"
+ENV PYTHONPATH=/api
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 
 # Copy dependencies before installation
-COPY pyproject.toml uv.lock alembic.ini /app/
-COPY Makefile /app/
-COPY ./api /app/api
-COPY ./scripts /app/scripts
-COPY ./migrations /app/migrations
+COPY pyproject.toml uv.lock alembic.ini /api/
+COPY Makefile /api/
+COPY ./api /api/api
+COPY ./scripts /api/scripts
+COPY ./migrations /api/migrations
 
 # Install optional dev dependencies
 ARG INSTALL_DEV=true
