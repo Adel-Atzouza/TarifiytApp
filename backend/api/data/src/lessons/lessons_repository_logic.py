@@ -1,11 +1,10 @@
-from sqlalchemy import select
 from dependency_injector.wiring import inject
 
 from api.domain.src.repositories.lessons_repository import LessonsRepository
 from api.data.src.db_models.LessonDB import LessonDB
 from api.domain.src.mappers.lesson_db_mapper import LessonDBMapper
-from api.domain.src.models.Lesson import Lesson
 from api.api.src.containers.database import SessionDep
+
 
 class LessonsRepositoryLogic(LessonsRepository):
     @inject
@@ -25,7 +24,7 @@ class LessonsRepositoryLogic(LessonsRepository):
         self.session.add(db_lesson)
         self.session.refresh(db_lesson)
         return LessonDBMapper.to_domain_model(db_lesson)
-    
+
     def update_lesson(self, lesson_id: int, lesson):
         db_lesson = self.session.get(LessonDB, lesson_id)
         if not db_lesson:
@@ -35,11 +34,10 @@ class LessonsRepositoryLogic(LessonsRepository):
         self.session.add(db_lesson)
         self.session.refresh(db_lesson)
         return LessonDBMapper.to_domain_model(db_lesson)
-    
+
     def delete_lesson(self, lesson_id: int):
         db_lesson = self.session.get(LessonDB, lesson_id)
         if not db_lesson:
             raise ValueError(f"Lesson with id {lesson_id} not found")
         self.session.delete(db_lesson)
         return None
-

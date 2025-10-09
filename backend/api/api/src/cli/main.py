@@ -1,6 +1,5 @@
 import typer
 from rich.console import Console
-from dependency_injector import providers
 
 from api.api.src.containers.container import Container
 from api.api.src.containers.database import session_context
@@ -10,6 +9,7 @@ from functools import wraps
 app = typer.Typer()
 console = Console()
 container = Container()
+
 
 def command(*c_args, **c_kwargs):
     def decorator(func):
@@ -25,8 +25,11 @@ def command(*c_args, **c_kwargs):
                     "Tip: Start Docker (DB service) with: [bold]docker compose up -d[/bold], or set DB_URL to a reachable database."
                 )
                 raise typer.Exit(code=1)
+
         return wrapped
+
     return decorator
+
 
 @command()
 def get_lessons() -> None:

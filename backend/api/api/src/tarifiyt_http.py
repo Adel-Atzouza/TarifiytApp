@@ -1,11 +1,9 @@
-from typing import Any, Callable, Generator
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.api.src.routers.lessons import router as lessons_router
 from api.api.src.containers.container import Container
 from api.api.src.containers.database import set_request_session, reset_request_session
-from dependency_injector.wiring import Provide
 
 
 class TarifiytHTTP(FastAPI):
@@ -30,7 +28,7 @@ class TarifiytHTTP(FastAPI):
 
     def _setup_routers(self) -> None:
         self.include_router(lessons_router)
-    
+
     def _setup_di(self) -> None:
         # Initialize container and install request-scope middleware
         container = Container()
@@ -52,6 +50,3 @@ class TarifiytHTTP(FastAPI):
             finally:
                 session.close()
                 reset_request_session(token)
-    
-
-

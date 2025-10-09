@@ -1,9 +1,9 @@
 from typing import Any
 from dependency_injector.wiring import inject
 
-from api.domain.src.models.Lesson import Lesson
 
 from api.api.src.containers.repositories import LessonsRepositoryLogicDep
+
 
 class GetAllLessonsInteractor:
     @inject

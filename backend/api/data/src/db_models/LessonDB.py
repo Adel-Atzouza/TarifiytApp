@@ -4,7 +4,6 @@ from .Base import Base
 from uuid import UUID
 
 
-
 class LessonDB(Base):
     __tablename__ = "lessons"
 

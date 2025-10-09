@@ -7,10 +7,9 @@ from .database import Container as DatabaseContainer
 from api.data import src as repositories
 from api.domain.src import interactors
 
+
 class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        packages=[repositories, interactors]
-    )
+    wiring_config = containers.WiringConfiguration(packages=[repositories, interactors])
 
     interactors = providers.Container(InteractorsContainer)
     database = providers.Container(DatabaseContainer)

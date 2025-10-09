@@ -15,19 +15,22 @@ from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
-DB_URL = os.environ.get("DB_URL") #or "sqlite+pysqlite:///:memory:"
+DB_URL = os.environ.get("DB_URL")  # or "sqlite+pysqlite:///:memory:"
 
 # Add sqlite-specific connect args to allow usage in single-threaded test runs
-connect_args = {} #{"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
+connect_args = {}  # {"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
 
 # Context var to hold the per-request Session
 _SESSION_CTX: ContextVar[Optional[Session]] = ContextVar("_SESSION_CTX", default=None)
 
+
 def set_request_session(session: Session) -> Token:
     return _SESSION_CTX.set(session)
 
+
 def reset_request_session(token: Token) -> None:
     _SESSION_CTX.reset(token)
+
 
 def get_current_session() -> Session:
     session = _SESSION_CTX.get()
@@ -35,10 +38,9 @@ def get_current_session() -> Session:
         raise RuntimeError("DB session not set for this request")
     return session
 
+
 class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        packages=[lessons, routers]
-    )
+    wiring_config = containers.WiringConfiguration(packages=[lessons, routers])
     engine = providers.Singleton(
         create_engine,
         url=DB_URL,
@@ -51,13 +53,14 @@ class Container(containers.DeclarativeContainer):
         autocommit=False,
         autoflush=False,
         bind=engine,
-        expire_on_commit=False
+        expire_on_commit=False,
     )
     # Provide current request-bound Session via context var
     session = providers.Callable(get_current_session)
 
 
 SessionDep = Annotated[Session, Depends(Provide[Container.session])]
+
 
 # Simple context manager for non-HTTP contexts (CLI, scripts)
 @contextmanager
