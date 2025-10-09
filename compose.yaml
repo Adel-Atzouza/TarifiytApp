@@ -39,7 +39,7 @@ services:
         - action: sync
           x-initialSync: true
           path: ./backend
-          target: /app
+          target: /api
           ignore:
             - .venv/
         - action: rebuild
