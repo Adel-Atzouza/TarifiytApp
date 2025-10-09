@@ -20,7 +20,7 @@ ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 
 # Copy dependencies before installation
-COPY pyproject.toml uv.lock alembic.ini Makefile /api/
+COPY pyproject.toml uv.lock alembic.ini makefile /api/
 COPY ./api /api/api
 COPY ./scripts /api/scripts
 COPY ./migrations /api/migrations
