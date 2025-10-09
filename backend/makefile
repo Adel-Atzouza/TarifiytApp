@@ -23,14 +23,14 @@ fix:
 	@echo "Cleaning up code..."
 	@uv run --extra dev ruff check . --fix
 	@uv run --extra dev ruff format .
-	@uv run --extra dev mypy src tests
+	@uv run --extra dev mypy api tests
 
 # Run code quality checks
 qa:
 	@echo "Running quality checks on code..."
-	@uv run --extra dev mypy src tests scripts || { docker compose logs api; exit 1; }
-	@uv run --extra dev ruff check src tests scripts || { docker compose logs api; exit 1; }
-	@uv run --extra dev ruff format src tests scripts --check || { docker compose logs api; exit 1; }
+	@uv run --extra dev mypy api tests scripts || { docker compose logs api; exit 1; }
+	@uv run --extra dev ruff check api tests scripts || { docker compose logs api; exit 1; }
+	@uv run --extra dev ruff format api tests scripts --check || { docker compose logs api; exit 1; }
 
 # ========================================
 # 🚀 Application Commands
