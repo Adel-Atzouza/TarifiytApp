@@ -1,9 +1,9 @@
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column
+from .Base import Base
 from uuid import UUID
 
-class Base(DeclarativeBase):
-    pass
+
 
 class LessonDB(Base):
     __tablename__ = "lessons"

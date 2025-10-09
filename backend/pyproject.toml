@@ -9,6 +9,7 @@ dependencies = [
     "cryptography>=46.0.1",
     "dependency-injector>=4.48.2",
     "fastapi[standard]>=0.117.1",
+    "polyfactory>=2.22.2",
     "pymysql>=1.1.2",
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.43",
